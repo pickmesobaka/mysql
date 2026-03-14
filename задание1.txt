@@ -1,0 +1,307 @@
+1.Получить список пользователей и количество их заказов.
+SELECT u.id, u.email, COUNT(o.id) AS order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.email;
+
+2.Вывести все товары с названием категории.
+SELECT p.id, p.name AS product_name, p.price, c.name AS category_name
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id;
+
+3.Найти пользователей, у которых есть хотя бы один заказ.
+SELECT DISTINCT u.id, u.email, u.created_at
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id;
+
+4.Получить список заказов с email пользователя.
+SELECT o.id, o.status, o.created_at, u.email
+FROM orders o
+INNER JOIN users u ON o.user_id = u.id;
+
+5.Вывести товары и количество отзывов по каждому товару.
+SELECT p.id, p.name AS product_name, p.price, COUNT(r.id) AS review_count
+FROM products p
+LEFT JOIN reviews r ON p.id = r.product_id
+GROUP BY p.id, p.name, p.price;
+
+6.Найти все товары, у которых нет отзывов.
+SELECT p.id, p.name AS product_name, p.price
+FROM products p
+LEFT JOIN reviews r ON p.id = r.product_id
+WHERE r.id IS NULL;
+
+7.Получить список пользователей и их ролей.
+SELECT u.id, u.email, r.name AS role_name
+FROM users u
+LEFT JOIN user_roles ur ON u.id = ur.user_id
+LEFT JOIN roles r ON ur.role_id = r.id;
+
+8.Найти заказы, в которых больше одной позиции.
+SELECT o.id, o.user_id, o.status, o.created_at, COUNT(oi.id) AS items_count
+FROM orders o
+INNER JOIN order_items oi ON o.id = oi.order_id
+GROUP BY o.id, o.user_id, o.status, o.created_at
+HAVING COUNT(oi.id) > 1;
+
+9.Вывести все адреса с названием города и страны.
+SELECT a.id, a.address_line, ct.name AS city_name, cn.name AS country_name
+FROM addresses a
+INNER JOIN cities ct ON a.city_id = ct.id
+INNER JOIN countries cn ON ct.country_id = cn.id;
+
+10.Получить список товаров и брендов.
+SELECT p.id, p.name AS product_name, p.price, b.name AS brand_name
+FROM products p
+LEFT JOIN product_brands pb ON p.id = pb.product_id
+LEFT JOIN brands b ON pb.brand_id = b.id;
+
+11.Посчитать количество пользователей.
+SELECT COUNT(*) AS total_users FROM users;
+
+12.Найти среднюю цену товаров.
+SELECT AVG(price) AS average_price FROM products;
+
+13.Посчитать количество товаров в каждой категории.
+SELECT c.id, c.name AS category_name, COUNT(p.id) AS product_count
+FROM categories c
+LEFT JOIN products p ON c.id = p.category_id
+GROUP BY c.id, c.name;
+
+14.Найти количество заказов у каждого пользователя.
+SELECT u.id, u.email, COUNT(o.id) AS order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.email;
+
+15.Посчитать общую сумму каждого заказа.
+SELECT o.id, o.user_id, o.status, SUM(oi.price * oi.quantity) AS total_amount
+FROM orders o
+INNER JOIN order_items oi ON o.id = oi.order_id
+GROUP BY o.id, o.user_id, o.status;
+
+16.Найти максимальную цену товара в каждой категории.
+SELECT c.id, c.name AS category_name, MAX(p.price) AS max_price
+FROM categories c
+LEFT JOIN products p ON c.id = p.category_id
+GROUP BY c.id, c.name;
+
+17.Посчитать количество отзывов с рейтингом 5.
+SELECT COUNT(*) AS five_star_reviews FROM reviews WHERE rating = 5;
+
+18.Найти средний рейтинг по каждому товару.
+SELECT p.id, p.name AS product_name, AVG(r.rating) AS average_rating
+FROM products p
+LEFT JOIN reviews r ON p.id = r.product_id
+GROUP BY p.id, p.name;
+
+19.Посчитать количество товаров у каждого бренда.
+SELECT b.id, b.name AS brand_name, COUNT(pb.product_id) AS product_count
+FROM brands b
+LEFT JOIN product_brands pb ON b.id = pb.brand_id
+GROUP BY b.id, b.name;
+
+20.Найти пользователей, у которых больше 2 заказов.
+SELECT u.id, u.email, COUNT(o.id) AS order_count
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.email
+HAVING COUNT(o.id) > 2;
+
+21.Найти пользователей, у которых нет заказов.
+SELECT u.id, u.email, u.created_at
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE o.id IS NULL;
+
+22.Найти товары, которые ни разу не покупались.
+SELECT p.id, p.name AS product_name, p.price
+FROM products p
+LEFT JOIN order_items oi ON p.id = oi.product_id
+WHERE oi.id IS NULL;
+
+23.Найти товары без скидок.
+SELECT p.id, p.name AS product_name, p.price
+FROM products p
+LEFT JOIN product_discounts pd ON p.id = pd.product_id
+WHERE pd.discount_id IS NULL;
+
+24.Найти категории без товаров.
+SELECT c.id, c.name AS category_name
+FROM categories c
+LEFT JOIN products p ON c.id = p.category_id
+WHERE p.id IS NULL;
+
+25.Найти пользователей без адресов.
+SELECT u.id, u.email
+FROM users u
+LEFT JOIN addresses a ON u.id = a.user_id
+WHERE a.id IS NULL;
+
+26.Найти товары без изображений.
+SELECT p.id, p.name AS product_name
+FROM products p
+LEFT JOIN product_images pi ON p.id = pi.product_id
+WHERE pi.id IS NULL;
+
+27.Найти бренды, у которых нет товаров.
+SELECT b.id, b.name AS brand_name
+FROM brands b
+LEFT JOIN product_brands pb ON b.id = pb.brand_id
+WHERE pb.product_id IS NULL;
+
+28.Найти заказы без отправки.
+SELECT o.id, o.user_id, o.status, o.created_at
+FROM orders o
+LEFT JOIN shipments s ON o.id = s.order_id
+WHERE s.id IS NULL;
+
+29.Найти пользователей без ролей.
+SELECT u.id, u.email
+FROM users u
+LEFT JOIN user_roles ur ON u.id = ur.user_id
+WHERE ur.role_id IS NULL;
+
+30.Найти товары, которых нет на складах.
+SELECT p.id, p.name AS product_name
+FROM products p
+LEFT JOIN stocks s ON p.id = s.product_id
+WHERE s.id IS NULL;
+
+31.Найти товары дороже средней цены по магазину.
+SELECT id, name, price
+FROM products
+WHERE price > (SELECT AVG(price) FROM products);
+
+32.Найти пользователей, у которых количество заказов больше среднего.
+SELECT u.id, u.email, COUNT(o.id) AS order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.email
+HAVING COUNT(o.id) > (SELECT AVG(order_count) FROM (SELECT COUNT(*) AS order_count FROM orders GROUP BY user_id) AS avg_orders);
+
+33.Найти заказы с суммой больше средней суммы заказа.
+SELECT o.id, o.user_id, SUM(oi.price * oi.quantity) AS order_total
+FROM orders o
+INNER JOIN order_items oi ON o.id = oi.order_id
+GROUP BY o.id, o.user_id
+HAVING SUM(oi.price * oi.quantity) > (SELECT AVG(order_total) FROM (SELECT SUM(price * quantity) AS order_total FROM order_items GROUP BY order_id) AS avg_order_totals);
+
+34.Найти товары с рейтингом выше среднего.
+SELECT p.id, p.name, AVG(r.rating) AS avg_rating
+FROM products p
+INNER JOIN reviews r ON p.id = r.product_id
+GROUP BY p.id, p.name
+HAVING AVG(r.rating) > (SELECT AVG(rating) FROM reviews);
+
+35.Найти пользователей, которые сделали заказы на сумму больше 1000.
+SELECT u.id, u.email, SUM(oi.price * oi.quantity) AS total_spent
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN order_items oi ON o.id = oi.order_id
+GROUP BY u.id, u.email
+HAVING SUM(oi.price * oi.quantity) > 1000;
+
+36.Найти категории, в которых товаров больше среднего количества.
+SELECT c.id, c.name, COUNT(p.id) AS product_count
+FROM categories c
+LEFT JOIN products p ON c.id = p.category_id
+GROUP BY c.id, c.name
+HAVING COUNT(p.id) > (SELECT AVG(product_count) FROM (SELECT COUNT(*) AS product_count FROM products GROUP BY category_id) AS avg_product_counts);
+
+37.Найти товары, которые покупались чаще среднего.
+SELECT p.id, p.name, COUNT(oi.id) AS purchase_count
+FROM products p
+INNER JOIN order_items oi ON p.id = oi.product_id
+GROUP BY p.id, p.name
+HAVING COUNT(oi.id) > (SELECT AVG(purchase_count) FROM (SELECT COUNT(*) AS purchase_count FROM order_items GROUP BY product_id) AS avg_purchase_counts);
+
+38.Найти пользователей, у которых есть и заказы, и отзывы.
+SELECT DISTINCT u.id, u.email
+FROM users u
+WHERE EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id)
+  AND EXISTS (SELECT 1 FROM reviews r WHERE r.user_id = u.id);
+
+39.Найти бренды, товары которых покупались.
+SELECT DISTINCT b.id, b.name
+FROM brands b
+INNER JOIN product_brands pb ON b.id = pb.brand_id
+INNER JOIN order_items oi ON pb.product_id = oi.product_id;
+
+40.Найти пользователей, которые подписаны хотя бы на одну рассылку.
+SELECT DISTINCT u.id, u.email
+FROM users u
+INNER JOIN newsletter_subscribers ns ON u.id = ns.user_id;
+
+41.Получить топ-5 самых продаваемых товаров.
+SELECT p.id, p.name, SUM(oi.quantity) AS total_sold
+FROM products p
+INNER JOIN order_items oi ON p.id = oi.product_id
+GROUP BY p.id, p.name
+ORDER BY total_sold DESC
+LIMIT 5;
+
+42.Найти пользователей с наибольшей суммой покупок.
+SELECT u.id, u.email, SUM(oi.price * oi.quantity) AS total_spent
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN order_items oi ON o.id = oi.order_id
+GROUP BY u.id, u.email
+ORDER BY total_spent DESC
+LIMIT 10;
+
+43.Посчитать выручку по каждой категории.
+SELECT c.id, c.name, SUM(oi.price * oi.quantity) AS total_revenue
+FROM categories c
+INNER JOIN products p ON c.id = p.category_id
+INNER JOIN order_items oi ON p.id = oi.product_id
+GROUP BY c.id, c.name;
+
+44.Посчитать выручку по каждому бренду.
+SELECT b.id, b.name, SUM(oi.price * oi.quantity) AS total_revenue
+FROM brands b
+INNER JOIN product_brands pb ON b.id = pb.brand_id
+INNER JOIN order_items oi ON pb.product_id = oi.product_id
+GROUP BY b.id, b.name;
+
+45.Найти самый популярный товар в каждой категории.
+SELECT c.name AS category_name, p.name AS product_name, MAX(pop.total_sold) AS max_sold
+FROM categories c
+INNER JOIN (
+    SELECT p.category_id, p.id, p.name, SUM(oi.quantity) AS total_sold
+    FROM products p
+    INNER JOIN order_items oi ON p.id = oi.product_id
+    GROUP BY p.category_id, p.id, p.name
+) pop ON c.id = pop.category_id
+GROUP BY c.id, c.name;
+
+46.Найти пользователей, которые покупали товары минимум из двух категорий.
+SELECT u.id, u.email, COUNT(DISTINCT p.category_id) AS categories_purchased
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id
+INNER JOIN order_items oi ON o.id = oi.order_id
+INNER JOIN products p ON oi.product_id = p.id
+GROUP BY u.id, u.email
+HAVING COUNT(DISTINCT p.category_id) >= 2;
+
+47.Найти заказы, в которых есть товары со скидкой.
+SELECT DISTINCT o.id, o.user_id, o.status, o.created_at
+FROM orders o
+INNER JOIN order_items oi ON o.id = oi.order_id
+INNER JOIN product_discounts pd ON oi.product_id = pd.product_id;
+
+48.Найти пользователей, которые оставили отзывы на купленные товары.
+SELECT DISTINCT u.id, u.email
+FROM users u
+INNER JOIN reviews r ON u.id = r.user_id
+WHERE EXISTS (
+    SELECT 1 FROM orders o
+    INNER JOIN order_items oi ON o.id = oi.order_id
+    WHERE o.user_id = u.id AND oi.product_id = r.product_id
+);
+
+49.Найти товары, у которых есть и скидки, и отзывы.
+SELECT DISTINCT p.id, p.name
+FROM products p
+INNER JOIN product_discounts pd ON p.id = pd.product_id
+INNER JOIN reviews r ON p.id = r.product_id;
